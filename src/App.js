@@ -4,18 +4,24 @@ import debounce from 'lodash.debounce';
 import {fetchSearchResult, fetchSearchResults} from './utils'
 import SearchInput from "./components/SearchInput";
 import ListItem from "./components/ListItem";
+const fetchData = async (query, cb) => {
+  const res = await fetchSearchResults(query);
+  cb(res);
+ };
+ const debouncedFetchData = debounce((query, cb) => {
+  fetchData(query, cb);
+ }, 500);
 function App() {
   const [query,setQuery] = React.useState('')
   const[results,setResults] = React.useState([])
 
-  const fetchData = async () => {
-    const res = await fetchSearchResults(query)
-    console.log(res);
-    setResults(res)
-  }
+ 
 
   React.useEffect(() => {
-    fetchData()
+    debouncedFetchData(query, res => {
+      setResults(res)
+    })
+    
   },[query])
 
   return (

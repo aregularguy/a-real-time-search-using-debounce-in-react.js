@@ -1,17 +1,37 @@
+import React from "react"
+import './style.css'
+import debounce from 'lodash.debounce';
+import {fetchSearchResult, fetchSearchResults} from './utils'
+import SearchInput from "./components/SearchInput";
+import ListItem from "./components/ListItem";
 function App() {
-  return (
-    <div className="grid place-items-center h-screen" >
-    <div className="bg-blue-500 text-white p-4 flex flex-col items-center">
-    
-      <h1 className="text-3xl font-bold ">Hello world!</h1>
-      <p   className="mt-2" >This is Paragraph</p>
-    </div>
-    <div class="flex flex-row">
-  <div class="bg-red-300 p-2">First Item</div>
-  <div class="bg-blue-300 p-2">Second Item</div>
-  <div class="bg-green-300 p-2">Third Item</div>
-</div>
+  const [query,setQuery] = React.useState('')
+  const[results,setResults] = React.useState([])
 
+  const fetchData = async () => {
+    const res = await fetchSearchResults(query)
+    console.log(res);
+    setResults(res)
+  }
+
+  React.useEffect(() => {
+    fetchData()
+  },[query])
+
+  return (
+   
+<div>
+    <SearchInput value={query} onChangeText = { e  =>{
+      setQuery(e.target.value)
+    }} />
+    {results.map((res,index) => (
+      <div key={index} >
+      <ListItem title={res.name}
+      imageUrl={res.imageUrl}
+      caption={res.tagline}
+      />
+      </div>
+    ))}
     </div>
   );
 }

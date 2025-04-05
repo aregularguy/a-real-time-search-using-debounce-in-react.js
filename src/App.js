@@ -21,6 +21,7 @@ function App() {
   return (
    
 <div>
+    <h1 className="app-header">☕ Coffee Explorer</h1>
     <SearchInput value={query} onChangeText = { e  =>{
       setQuery(e.target.value)
     }} />

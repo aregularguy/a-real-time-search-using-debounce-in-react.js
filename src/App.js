@@ -10,7 +10,7 @@ function App() {
 
   const fetchData = async () => {
     const res = await fetchSearchResults(query)
-    console.log(res);
+    // console.log(res);
     setResults(res)
   }
 

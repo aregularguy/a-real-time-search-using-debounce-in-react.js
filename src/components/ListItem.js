@@ -1,11 +1,11 @@
 import React from "react"
 import "./ListItem.css"
 
-const ListItem = ({title,caption,imageURL}) => {
+const ListItem = ({title,caption,imageUrl}) => {
     return (
         <div className="list-item-container">
             <div className="left" >
-            <img src ={imageURL} alt="Image" className="thumbnail" />
+            <img src ={imageUrl} alt="Image" className="thumbnail" />
             </div>
             <div className="center" >
             <h4>{title}</h4>

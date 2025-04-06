@@ -1,9 +1,9 @@
-import React from "react"
-import './style.css'
-import debounce from 'lodash.debounce';
-import {fetchSearchResult, fetchSearchResults} from './utils'
+import React, {useEffect} from "react";
+import './style.css';
+import { fetchSearchResults } from './utils';
 import SearchInput from "./components/SearchInput";
 import ListItem from "./components/ListItem";
+
 function App() {
   const [query, setQuery] = React.useState('')
   const [results, setResults] = React.useState([])
@@ -70,11 +70,21 @@ function App() {
       <ListItem title={res.name}
       imageUrl={res.imageUrl}
       caption={res.tagline}
+
       />
+
+      <div className="results-wrapper">
+        {results.map((res, index) => (
+          <ListItem
+            key={index}
+            title={res.title}
+            imageURL={res.image || 'https://via.placeholder.com/100'}
+            caption={res.description}
+          />
+        ))}
       </div>
-    ))}
-    </div>
-  );
+    </>
+  )
 }
 
 export default App;

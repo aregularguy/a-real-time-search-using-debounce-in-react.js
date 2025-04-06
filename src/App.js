@@ -5,31 +5,72 @@ import SearchInput from "./components/SearchInput";
 import ListItem from "./components/ListItem";
 
 function App() {
-  const [query, setQuery] = React.useState('');
-  const [results, setResults] = React.useState([]);
+  const [query, setQuery] = React.useState('')
+  const [results, setResults] = React.useState([])
+  const [debouncedQuery, setDebouncedQuery] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(false)
 
-  const fetchData = async () => {
-    const res = await fetchSearchResults(query);
-    setResults(res);
+  // Create a debounced function that updates debouncedQuery after 2 seconds of inactivity
+  const debouncedSetQuery = React.useCallback(
+    debounce(value => {
+      setDebouncedQuery(value);
+    }, 2000),
+    []
+  );
+
+  // Handle input change
+  const handleInputChange = e => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.length > 0) {
+      setIsLoading(true); // Set loading when user is typing and has entered something
+    }
+    debouncedSetQuery(value);
   };
 
- useEffect(() => {
-    if (query.trim()) {
-      fetchData();
-    } else {
-      setResults([]);
+  const fetchData = async () => {
+    try {
+      const res = await fetchSearchResults(debouncedQuery)
+      setResults(res)
+    } finally {
+      setIsLoading(false) // Clear loading state after API call completes
     }
-  }, [query]);
+  }
+
+  // Only fetch when debouncedQuery changes, not on every keystroke
+  React.useEffect(() => {
+    if (debouncedQuery.length > 0) {
+      fetchData()
+    } else {
+      setResults([])
+      setIsLoading(false)
+    }
+  }, [debouncedQuery])
 
   return (
-    <>
-    <div className="app-container">
-      <h2 className="page-title">☕ Coffee Finder</h2>
+   
+<div>
+    <h1 className="app-header">☕ Coffee Explorer</h1>
+    <SearchInput value={query} onChangeText={handleInputChange} />
+    
+    {isLoading && (
+      <div className="loading-indicator">
+        <p>Searching for coffee... ☕</p>
       </div>
-  
-      <SearchInput
-        value={query}
-        onChangeText={(e) => setQuery(e.target.value)}
+    )}
+    
+    {!isLoading && results.length === 0 && debouncedQuery !== '' && (
+      <div className="no-results">
+        <p>No coffee products found matching your search.</p>
+      </div>
+    )}
+    
+    {results.map((res,index) => (
+      <div key={index} >
+      <ListItem title={res.name}
+      imageUrl={res.imageUrl}
+      caption={res.tagline}
+
       />
 
       <div className="results-wrapper">
